@@ -1,0 +1,22 @@
+#!/bin/bash
+# Parameter 1: TS file
+
+DIR=$(dirname "$1")
+FILENAME=$(basename "$1")
+NAME="`echo "$FILENAME" | cut -d'.' -f1`"
+
+projectx "$1"
+
+if [ -f "$DIR/$NAME.ac3" ]
+then
+	mplex -f 8 -o "$DIR/$NAME.mpg" "$DIR/$NAME.ac3" "$DIR/$NAME.m2v" "$DIR/$NAME.mp2"
+	rm "$DIR/$NAME.ac3"
+else
+	mplex -f 8 -o "$DIR/$NAME.mpg" "$DIR/$NAME.m2v" "$DIR/$NAME.mp2"
+fi
+
+mv "$DIR/$NAME.mpg" in.mpg
+HandBrakeCLI -Z Normal -i in.mpg -o out.mp4
+mv out.mp4 "$DIR/$NAME.mp4"
+
+rm -f *.mp2 *.m2v *.ac3 *.mpg *.txt
